@@ -29,7 +29,7 @@ namespace PostProcessing
             FolderNames = System.IO.File.ReadAllLines(@"C:\Users\Public\documents\blockids.txt");
             if (!Directory.Exists(dataDir))
             {
-                dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\PostProcessing";
+                dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\PostProcessing\\";
             }
             if (!Directory.Exists(dataDir))
             {
