@@ -67,6 +67,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,17 +81,17 @@
   <ItemGroup>
     <Compile Include="BlockReport.cs" />
     <Compile Include="BlockSummary.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="PostProcessing.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="PostProcessing.Designer.cs">
+      <DependentUpon>PostProcessing.cs</DependentUpon>
     </Compile>
     <Compile Include="PostProcessingSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="PostProcessing.resx">
+      <DependentUpon>PostProcessing.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -110,6 +112,15 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="REPORT_FORMAT.xlsx" />
+    <None Include="sourcepolygon.dbf" />
+    <None Include="SOURCEPOLYGON.prj" />
+    <None Include="SOURCEPOLYGON.sbn" />
+    <None Include="SOURCEPOLYGON.sbx" />
+    <None Include="sourcepolygon.shp" />
+    <None Include="SOURCEPOLYGON.shp.DANIEL-PC.3732.6092.sr.lock" />
+    <None Include="SOURCEPOLYGON.shp.DANIEL-PC.3880.3996.sr.lock" />
+    <None Include="SOURCEPOLYGON.shp.DANIEL-PC.4668.3712.sr.lock" />
+    <None Include="sourcepolygon.shx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -132,7 +143,15 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="blockids.txt" />
+    <Content Include="SOURCEPOLYGON.shp.xml" />
     <Content Include="table-icon-large.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Public\Documents\FastDBF-1.0\FastDBF\SocialExplorer.FastDBF.csproj">
+      <Project>{9cf5ed11-6d2b-4fef-8a0a-b2e12de59867}</Project>
+      <Name>SocialExplorer.FastDBF</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

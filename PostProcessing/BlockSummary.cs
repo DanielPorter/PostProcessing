@@ -108,6 +108,7 @@ namespace PostProcessing
         public double TreeDensity;
 
         public int skips;
+        public List<int> ExpansionClasses = new List<int>();
 
         public double NDVIDeadwood;
         public double NDVIStressed;
@@ -126,67 +127,15 @@ namespace PostProcessing
         private string name;
         private double MeanTreeDensity;
         public double canopyVolume = 0;
+        public static double NDREMin;
+        public static double NDREMax;
+        public static double NDVIMin;
+        public static double NDVIMax;
         public BlockSummary()
         {
             
         }
 
-        public BlockSummary(IFeatureList featurelist, 
-            double acres, double rowspacing, double treeSpacing, double adjustedTreeSpacing, string id, double treeDensity)
-        {
-
-            this.groveID = id;
-            this.groups = Classify(featurelist).ToList();
-            var groupKeys = groups.Select(x => x.Key).ToList();
-            this.TreeDensity = treeDensity;
-            this.Date = Convert.ToString(featurelist[0].DataRow["TIME"]).Substring(0, 9);
-            
-            this.Acres = acres;
-            this.RowSpacing = rowspacing;
-            this.TreeSpacing = treeSpacing;
-            this.AdjustedTreeSpacing = adjustedTreeSpacing;
-
-            this.TotalLinearFeet = this.Acres * FEETSQPERACRE / this.RowSpacing;
-
-            TotalPointCount = featurelist.Count;
-            H1PointPercentage = (groups[1].Count() - 1) / TotalPointCount;
-            H2PointPercentage = (groups[2].Count() - 1) / TotalPointCount;
-            H3PointPercentage = (groups[3].Count() - 1) / TotalPointCount;
-            H4PointPercentage = (groups[4].Count() - 1) / TotalPointCount;
-            H5PointPercentage = (groups[5].Count() - 1) / TotalPointCount;
-
-            H1Acres = this.Acres * H1PointPercentage;
-            H2Acres = this.Acres * H2PointPercentage;
-            H3Acres = this.Acres * H3PointPercentage;
-            H4Acres = this.Acres * H4PointPercentage;
-            H5Acres = this.Acres * H5PointPercentage;
-            ProductiveAcres = H2Acres + H3Acres + H4Acres + H5Acres;
-
-            H1LinearFeet = H1PointPercentage * TotalLinearFeet;
-            H2LinearFeet = H2PointPercentage * TotalLinearFeet;
-            H3LinearFeet = H3PointPercentage * TotalLinearFeet;
-            H4LinearFeet = H4PointPercentage * TotalLinearFeet;
-            H5LinearFeet = H5PointPercentage * TotalLinearFeet;
-
-            double RealTreeSpacing = AdjustedTreeSpacing != 0 ? AdjustedTreeSpacing : TreeSpacing;
-            H1Treecount = H1LinearFeet / RealTreeSpacing;
-            H2Treecount = H2LinearFeet / RealTreeSpacing;
-            H3Treecount = H3LinearFeet / RealTreeSpacing;
-            H4Treecount = H4LinearFeet / RealTreeSpacing;
-            H5Treecount = H5LinearFeet / RealTreeSpacing;
-            TotalTreeCount = (H1LinearFeet + H2LinearFeet + H3LinearFeet + H4LinearFeet + H5LinearFeet) / RealTreeSpacing;
-            //OpenArea = groups[0].Count() / TotalLinearFeet;
-            CalculateExpansionSpace2(featurelist);
-
-            //double expansionSpace = CalculateExpansionSpace();
-            //SkipsLinearFeet = expansionSpace;
-
-            ClassifyWoodTypes(featurelist);
-
-            NDREClassification(featurelist);
-            REDEDGEClassification(featurelist);
-            //featurelist.
-        }
 
         public BlockSummary(System.Data.DataTable pointsDataTable, 
             double acres, double rowspacing, double treeSpacing, double adjustedTreeSpacing, string id, double treeDensity)
@@ -207,12 +156,15 @@ namespace PostProcessing
 
             this.TotalLinearFeet = this.Acres * FEETSQPERACRE / this.RowSpacing;
 
+            CalculateExpansionSpace3(pointsDataTable);
+
             TotalPointCount = pointsDataTable.Rows.Count;
-            H1PointPercentage = (groups[1].Count() - 1) / TotalPointCount;
-            H2PointPercentage = (groups[2].Count() - 1) / TotalPointCount;
-            H3PointPercentage = (groups[3].Count() - 1) / TotalPointCount;
-            H4PointPercentage = (groups[4].Count() - 1) / TotalPointCount;
-            H5PointPercentage = (groups[5].Count() - 1) / TotalPointCount;
+            
+            H1PointPercentage = (groups[1].Count() - 1 + ExpansionClasses[1]) / TotalPointCount;
+            H2PointPercentage = (groups[2].Count() - 1 + ExpansionClasses[2]) / TotalPointCount;
+            H3PointPercentage = (groups[3].Count() - 1 + ExpansionClasses[3]) / TotalPointCount;
+            H4PointPercentage = (groups[4].Count() - 1 + ExpansionClasses[4]) / TotalPointCount;
+            H5PointPercentage = (groups[5].Count() - 1 + ExpansionClasses[5]) / TotalPointCount;
 
             H1Acres = this.Acres * H1PointPercentage;
             H2Acres = this.Acres * H2PointPercentage;
@@ -234,14 +186,14 @@ namespace PostProcessing
             H4Treecount = H4LinearFeet / RealTreeSpacing;
             H5Treecount = H5LinearFeet / RealTreeSpacing;
             TotalTreeCount = (H1LinearFeet + H2LinearFeet + H3LinearFeet + H4LinearFeet + H5LinearFeet) / RealTreeSpacing;
-            OpenArea = groups[0].Count() / TotalLinearFeet;
-            CalculateExpansionSpace3(pointsDataTable);
 
 
             NDREClassification(pointsDataTable);
-            REDEDGEClassification(pointsDataTable);
+            NDVIClassification(pointsDataTable);
             this.name = name;
             this.MeanTreeDensity = MeanTreeDensity;
+            double H0PointPercentage = (groups[1].Count() - 1 + ExpansionClasses[1]) / TotalPointCount;
+            OpenArea = H0PointPercentage * acres;
 
             bool distancePresent = false;
             foreach (DataColumn c in pointsDataTable.Columns)
@@ -267,30 +219,30 @@ namespace PostProcessing
                 );
         }
 
-        private void REDEDGEClassification(DataTable pointsDataTable)
+        private void NDVIClassification(DataTable pointsDataTable)
         {
                         List<int> deadwoodIndexes = new List<int>();
             
             for(int i = 0; i < pointsDataTable.Rows.Count; i++)
             {
                 DataRow feature = pointsDataTable.Rows[i];
-                double TopRE = Convert.ToDouble(feature["TNDVI"]);
-                double BottomRE = Convert.ToDouble(feature["TNDVI"]);
+                double TopNDVI = Convert.ToDouble(feature["TNDVI"]);
+                double BottomNDVI = Convert.ToDouble(feature["TNDVI"]);
                 if (Convert.ToDouble(feature["HEIGHT"]) > 7)
                 {
-                    if (TopRE > 1 | TopRE < -1 | BottomRE > 1 | BottomRE < -1)
+                    if (TopNDVI > NDVIMax | TopNDVI < NDVIMin | BottomNDVI > NDVIMax | BottomNDVI < NDVIMin)
                     {
                         NDVIUnclassifiable++;
                     }
-                    else if (TopRE > 0)
+                    else if (TopNDVI > 0)
                     {
                         NDVIHealthy++;
                     }
-                    else if (BottomRE > 0)
+                    else if (BottomNDVI > 0)
                     {
                         NDVIStressed++;
                     }
-                    else if (BottomRE < 0)
+                    else if (BottomNDVI < 0)
                     {
                         deadwoodIndexes.Add(i);
                     }
@@ -348,7 +300,7 @@ namespace PostProcessing
                     double TNDRE = Convert.ToDouble(feature["TNDRE"]);
                     double BNDRE = Convert.ToDouble(feature["BNDRE"]);
 
-                    if (TNDRE > 1.5 | TNDRE < -1.5 | BNDRE > 1.5 | BNDRE < -1.5)
+                    if (TNDRE > NDREMax | TNDRE < NDREMin | BNDRE > NDREMax | BNDRE < NDREMin)
                     {
                         NDREUnclassifiable++;
                     }
@@ -403,181 +355,90 @@ namespace PostProcessing
             double ndrepointcount = NDREStressed + NDREDeadwood + NDREHealthy + NDREUnclassifiable;
         }
 
-        private void REDEDGEClassification(IFeatureList featurelist)
+
+        private void CalculateExp(List<int> pointsClassifiedByHeight, List<DataRow> rows, List<int> classes, List<DataRow> emptyPoints)
         {
-            List<int> deadwoodIndexes = new List<int>();
+            List<Tuple<int, int>> group_locations = new List<Tuple<int, int>>();
+            int? beginning = null;
+            for (int i = 0; i < pointsClassifiedByHeight.Count; i++)
+            {
+                if (pointsClassifiedByHeight[i] == 0)
+                {
+                    if (beginning != null)
+                    {
+                        group_locations.Add(new Tuple<int, int>(beginning.Value, i - 1));
+                        beginning = null;
+                    }
+                }
+                else
+                {
+                    if (beginning == null)
+                    {
+                        beginning = i;
+                    }
+                    else
+                    {
+                        // Assume point is part of the group, ignore it.
+                    }
+                }
+            }
+
+            foreach (Tuple<int, int> group in group_locations)
+            {
+                for (int i = group.Item1 - 1; i >= group.Item1 - 3 & i >= 0; i--)
+                {
+                    if (Convert.ToDouble(rows[i]["HEIGHT"]) == 0)
+                    {
+                        classes[pointsClassifiedByHeight[group.Item1]]++;
+                        emptyPoints.Remove(rows[i]);
+                    }
+                    else
+                        break;
+                }
+                for (int i = group.Item2 + 1; i <= group.Item2 + 3 & i < rows.Count; i++)
+                {
+                    if (Convert.ToDouble(rows[i]["HEIGHT"]) == 0)
+                    {
+                        classes[pointsClassifiedByHeight[group.Item2]]++;
+                        emptyPoints.Remove(rows[i]);
+                    }
+                    else break;
+                }
+            }
+
+            int classesSum = classes.Sum();
+            int zeropoints = pointsClassifiedByHeight.Where(x => x == 0).Count();
             
-            for(int i = 0; i < featurelist.Count; i++)
-            {
-                IFeature feature = featurelist[i];
-                double TopRE = Convert.ToDouble(feature.DataRow["TNDVI"]);
-                double BottomRE = Convert.ToDouble(feature.DataRow["TNDVI"]);
-
-                if (TopRE > 1 | TopRE < -1 | BottomRE > 1 | BottomRE < -1)
-                {
-                    NDVIUnclassifiable++;
-                }
-                else if (TopRE > 0)
-                {
-                    NDVIHealthy++;
-                }
-                else if (BottomRE > 0)
-                {
-                    NDVIStressed++;
-                }
-                else if (BottomRE < 0)
-                {
-                    deadwoodIndexes.Add(i);
-                }
-
-            }
-            List<int> indexesToRemove = new List<int>();
-            for(int i = 0; i < deadwoodIndexes.Count; i++)
-            {
-                int index = deadwoodIndexes[i];
-                if(i > 0 && index - deadwoodIndexes[i - 1] == 1)
-                {
-                    // keep
-                }
-                else
-                {
-                    if(i < deadwoodIndexes.Count - 1 && index - deadwoodIndexes[i + 1] == -1)
-                    {
-
-                    }
-                    else
-                    {
-                        indexesToRemove.Add(index);
-                    }
-                }
-            }
-
-            NDVIStressed += indexesToRemove.Count;
-            NDVIDeadwood += deadwoodIndexes.Count - indexesToRemove.Count;
-            NDVIStressed = NDVIStressed / TotalPointCount;
-            NDVIDeadwood = NDVIDeadwood / TotalPointCount;
-            NDVIHealthy = NDVIHealthy / TotalPointCount;
-            NDVIUnclassifiable = NDVIUnclassifiable / TotalPointCount;
-        }
-
-
-        private void NDREClassification(IFeatureList featurelist)
-        {
-            List<int> deadwoodIndexes = new List<int>();
-
-            for (int i = 0; i < featurelist.Count; i++)
-            {
-                IFeature feature = featurelist[i];
-                if (Convert.ToDouble(feature.DataRow["HEIGHT"]) > 7)
-                {
-                    double TNDRE = Convert.ToDouble(feature.DataRow["TNDRE"]);
-                    double BNDRE = Convert.ToDouble(feature.DataRow["BNDRE"]);
-
-                    if (TNDRE > 1.5 | TNDRE < -1.5 | BNDRE > 1.5 | BNDRE < -1.5)
-                    {
-                        NDREUnclassifiable++;
-                    }
-                    else if (TNDRE > 0)
-                    {
-                        NDREHealthy++;
-                    }
-                    else if (BNDRE > 0)
-                    {
-                        NDREStressed++;
-                    }
-                    else
-                    {
-                        deadwoodIndexes.Add(i);
-                    }
-                }
-            }
-            List<int> indexesToRemove = new List<int>();
-            for (int i = 0; i < deadwoodIndexes.Count; i++)
-            {
-                int index = deadwoodIndexes[i];
-                if (i > 0 && index - deadwoodIndexes[i - 1] == 1)
-                {
-                    // keep
-                }
-                else
-                {
-                    if (i < deadwoodIndexes.Count - 1 && index - deadwoodIndexes[i + 1] == -1)
-                    {
-                        //keep
-                    }
-                    else
-                    {
-                        indexesToRemove.Add(index);
-                    }
-                }
-            }
-            NDREStressed += indexesToRemove.Count;
-            NDREDeadwood += deadwoodIndexes.Count - indexesToRemove.Count;
-
-            NDREStressed = NDREStressed / TotalPointCount;
-            NDREHealthy = NDREHealthy / TotalPointCount;
-            NDREDeadwood = NDREDeadwood / TotalPointCount;
-            NDREUnclassifiable = NDREUnclassifiable / TotalPointCount;
-            double ndrepointcount = NDREStressed + NDREDeadwood + NDREHealthy + NDREUnclassifiable;
         }
 
         private void CalculateExpansionSpace3(System.Data.DataTable featureTable)
         {
-
-            List<System.Data.DataRow> emptyPoints = featureTable.AsEnumerable().Where(x => Convert.ToDouble(x["HEIGHT"]) == 0).ToList();
-
-            for (int i = 0; i < featureTable.Rows.Count; i++)
+            ExpansionClasses.Add(0);
+            for(int i = 0; i <= heightClasses.Count; i++)
             {
-                int heightclass = AssignHeightClass(Convert.ToDouble(featureTable.Rows[i]["HEIGHT"]));
-                if (heightclass == 1 | heightclass == 2)
-                {
-                    for (int j = i - 3; j < i + 3; j++)
-                    {
-                        try
-                        {
-                            if (Convert.ToDouble(featureTable.Rows[j]["HEIGHT"]) == 0)
-                            {
-                                ExpansionSpace++;
-                                emptyPoints.Remove(featureTable.Rows[j]);
-                            }
-                        }
-                        catch (Exception err)
-                        {
-
-                        }
-                    }
-                }
+                ExpansionClasses.Add(0);
             }
-            OpenArea = emptyPoints.Count / TotalLinearFeet * Acres;
-        }
-        private void CalculateExpansionSpace2(IFeatureList featurelist)
-        {
+            List<System.Data.DataRow> leftEmptyPoints = featureTable.AsEnumerable()
+                .Where(x => Convert.ToDouble(x["HEIGHT"]) == 0 & Convert.ToString(x["left"]) == "left")
+                .ToList();
+            List<System.Data.DataRow> rightEmptyPoints = featureTable.AsEnumerable()
+            .Where(x => Convert.ToDouble(x["HEIGHT"]) == 0 & Convert.ToString(x["left"]) == "right")
+            .ToList();
+            var leftPoints = featureTable.AsEnumerable().Where(x => Convert.ToString(x["left"]) == "left")
+                .Select(x => AssignHeightClass(Convert.ToDouble(x["HEIGHT"]))).ToList();
 
-            List<IFeature> emptyPoints = featurelist.Where(x => Convert.ToDouble(x.DataRow["HEIGHT"]) == 0).ToList();
 
-            for (int i = 0; i < featurelist.Count; i++)
-            {
-                int heightclass = AssignHeightClass(Convert.ToDouble(featurelist[i].DataRow["HEIGHT"]));
-                if (heightclass == 1 | heightclass == 2)
-                {
-                    for (int j = i - 3; j < i + 3; j++)
-                    {
-                        try
-                        {
-                            if (Convert.ToDouble(featurelist[j].DataRow["HEIGHT"]) == 0)
-                            {
-                                ExpansionSpace++;
-                                emptyPoints.Remove(featurelist[j]);
-                            }
-                        }
-                        catch (Exception err)
-                        {
+            CalculateExp(leftPoints, 
+                featureTable.AsEnumerable().Where(x=>Convert.ToString(x["left"]) == "left").ToList(), 
+                ExpansionClasses, leftEmptyPoints);
+            var rightPoints = featureTable.AsEnumerable().Where(x => Convert.ToString(x["left"]) == "right").Select(x => AssignHeightClass(Convert.ToDouble(x["HEIGHT"]))).ToList();
+            CalculateExp(rightPoints,                
+                featureTable.AsEnumerable().Where(x=>Convert.ToString(x["left"]) == "right").ToList(),
+                ExpansionClasses, rightEmptyPoints);
 
-                        }
-                    }
-                }
-            }
-            OpenArea = emptyPoints.Count / TotalLinearFeet * Acres;
+            leftEmptyPoints.AddRange(rightEmptyPoints);
+            
+            SkipsLinearFeet = leftEmptyPoints.Count / TotalPointCount * TotalLinearFeet;
         }
 
         private void ClassifyWoodTypes(IFeatureList featurelist)
@@ -609,43 +470,6 @@ namespace PostProcessing
         }
 
 
-        //public double CalculateExpansionSpace()
-        //{
-        //    System.Timers.Timer timer = new System.Timers.Timer();
-        //    timer.Elapsed += timer_Elapsed;
-        //    List<IFeature> features = groups[1].ToList();
-        //    features.AddRange(groups[2].ToList());
-        //    FeatureSet fs = new FeatureSet(features);
-        //    progress prg = new progress();
-        //    IFeatureSet buffers = fs.Buffer(3.1 * 0.3048, false);
-        //    buffers.SaveAs(@"C:\users\public\documents\buffers.shp", true);
-        //    IFeatureSet points = new FeatureSet(groups[0].ToList());
-        //    points.SaveAs(@"C:\users\public\documents\points.shp", true);
-        //    List<IFeature> zeroPoints = groups[0].ToList();
-        //    double count = 0;
-        //    comparisonCount = 0;
-        //    buffers.IndexMode = true;
-        //    timer.Start();
-        //    //IFeatureSet unioned = buffers.UnionShapes(ShapeRelateType.All);
-        //    IGeometry union = null;
-        //    foreach (IFeature feat in buffers.Features)
-        //    {
-        //        for (int i = zeroPoints.Count - 1; i >= 0; i--)
-        //        {
-        //            comparisonCount++;
-        //            if (feat.Intersects(zeroPoints[i]))
-        //            {
-        //                count++;
-        //                //Console.WriteLine("AN INTERSECTION, {0}", count);
-        //                zeroPoints.RemoveAt(i);
-        //            }
-        //        }
-        //    }
-        //    IFeatureSet remainingPoints = new FeatureSet(zeroPoints);
-        //    remainingPoints.SaveAs(@"C:\users\public\documents\remaining_points.shp", true);
-        //    IFeatureSet ExpansionSpace = fs.Buffer(3.1 * 0.3048, false).Intersection(new FeatureSet(groups[0].ToList()), FieldJoinType.ForeignOnly, prg);
-        //    return ExpansionSpace.Features.Count() - groups[0].Count();
-        //}
 
         void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {

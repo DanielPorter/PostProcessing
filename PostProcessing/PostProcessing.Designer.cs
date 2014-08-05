@@ -1,6 +1,6 @@
 ﻿namespace PostProcessing
 {
-    partial class Form1
+    partial class PostProcessing
     {
         /// <summary>
         /// Required designer variable.
@@ -44,16 +44,18 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.txt_NDVIDeadMax = new System.Windows.Forms.TextBox();
-            this.txt_NDVIStressedMax = new System.Windows.Forms.TextBox();
-            this.txt_NDVIHealthyMax = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.txt_DataDirectory = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.btn_DataDirectory = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.RunReportWorker = new System.ComponentModel.BackgroundWorker();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.txt_ndviMin = new System.Windows.Forms.TextBox();
+            this.txt_ndviMax = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txt_NDREMax = new System.Windows.Forms.TextBox();
+            this.txt_NDREmin = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txt_H1Max
@@ -190,115 +192,128 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(321, 9);
+            this.label12.Location = new System.Drawing.Point(360, 18);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(91, 13);
+            this.label12.Size = new System.Drawing.Size(78, 13);
             this.label12.TabIndex = 21;
-            this.label12.Text = "NDRE Categories";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(289, 34);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(33, 13);
-            this.label13.TabIndex = 22;
-            this.label13.Text = "Dead";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(274, 64);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(48, 13);
-            this.label14.TabIndex = 23;
-            this.label14.Text = "Stressed";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(279, 97);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(43, 13);
-            this.label15.TabIndex = 24;
-            this.label15.Text = "Healthy";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(329, 36);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(31, 13);
-            this.label16.TabIndex = 25;
-            this.label16.Text = "0  to ";
-            // 
-            // txt_NDVIDeadMax
-            // 
-            this.txt_NDVIDeadMax.Location = new System.Drawing.Point(367, 33);
-            this.txt_NDVIDeadMax.Name = "txt_NDVIDeadMax";
-            this.txt_NDVIDeadMax.Size = new System.Drawing.Size(100, 20);
-            this.txt_NDVIDeadMax.TabIndex = 26;
-            this.txt_NDVIDeadMax.Text = ".2";
-            // 
-            // txt_NDVIStressedMax
-            // 
-            this.txt_NDVIStressedMax.Location = new System.Drawing.Point(367, 64);
-            this.txt_NDVIStressedMax.Name = "txt_NDVIStressedMax";
-            this.txt_NDVIStressedMax.Size = new System.Drawing.Size(100, 20);
-            this.txt_NDVIStressedMax.TabIndex = 27;
-            this.txt_NDVIStressedMax.Text = ".4";
-            // 
-            // txt_NDVIHealthyMax
-            // 
-            this.txt_NDVIHealthyMax.Location = new System.Drawing.Point(367, 97);
-            this.txt_NDVIHealthyMax.Name = "txt_NDVIHealthyMax";
-            this.txt_NDVIHealthyMax.Size = new System.Drawing.Size(100, 20);
-            this.txt_NDVIHealthyMax.TabIndex = 28;
-            this.txt_NDVIHealthyMax.Text = "1";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(340, 67);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(20, 13);
-            this.label17.TabIndex = 29;
-            this.label17.Text = "To";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(340, 100);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(20, 13);
-            this.label18.TabIndex = 30;
-            this.label18.Text = "To";
+            this.label12.Text = "NDRE Ranges";
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(288, 132);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(179, 110);
+            this.button1.Size = new System.Drawing.Size(239, 110);
             this.button1.TabIndex = 31;
             this.button1.Text = "Run Calculations";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // Form1
+            // txt_DataDirectory
+            // 
+            this.txt_DataDirectory.Location = new System.Drawing.Point(70, 277);
+            this.txt_DataDirectory.Name = "txt_DataDirectory";
+            this.txt_DataDirectory.Size = new System.Drawing.Size(252, 20);
+            this.txt_DataDirectory.TabIndex = 32;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(23, 280);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(43, 13);
+            this.label19.TabIndex = 33;
+            this.label19.Text = "DataDir";
+            // 
+            // btn_DataDirectory
+            // 
+            this.btn_DataDirectory.Location = new System.Drawing.Point(332, 273);
+            this.btn_DataDirectory.Name = "btn_DataDirectory";
+            this.btn_DataDirectory.Size = new System.Drawing.Size(143, 23);
+            this.btn_DataDirectory.TabIndex = 34;
+            this.btn_DataDirectory.Text = "Select Data Directory";
+            this.btn_DataDirectory.UseVisualStyleBackColor = true;
+            this.btn_DataDirectory.Click += new System.EventHandler(this.btn_DataDirectory_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(79, 314);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(396, 23);
+            this.button2.TabIndex = 35;
+            this.button2.Text = "Load Shapefiles (takes a long time)";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // RunReportWorker
+            // 
+            this.RunReportWorker.WorkerReportsProgress = true;
+            this.RunReportWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.RunReportWorker_DoWork);
+            this.RunReportWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.RunReportWorker_ProgressChanged);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(79, 343);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(396, 23);
+            this.progressBar1.TabIndex = 36;
+            // 
+            // txt_ndviMin
+            // 
+            this.txt_ndviMin.Location = new System.Drawing.Point(288, 83);
+            this.txt_ndviMin.Name = "txt_ndviMin";
+            this.txt_ndviMin.Size = new System.Drawing.Size(100, 20);
+            this.txt_ndviMin.TabIndex = 37;
+            this.txt_ndviMin.Text = "-1.5";
+            // 
+            // txt_ndviMax
+            // 
+            this.txt_ndviMax.Location = new System.Drawing.Point(427, 84);
+            this.txt_ndviMax.Name = "txt_ndviMax";
+            this.txt_ndviMax.Size = new System.Drawing.Size(100, 20);
+            this.txt_ndviMax.TabIndex = 38;
+            this.txt_ndviMax.Text = "1.5";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(365, 68);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(73, 13);
+            this.label13.TabIndex = 39;
+            this.label13.Text = "NDVI Ranges";
+            // 
+            // txt_NDREMax
+            // 
+            this.txt_NDREMax.Location = new System.Drawing.Point(427, 34);
+            this.txt_NDREMax.Name = "txt_NDREMax";
+            this.txt_NDREMax.Size = new System.Drawing.Size(100, 20);
+            this.txt_NDREMax.TabIndex = 41;
+            this.txt_NDREMax.Text = "1";
+            // 
+            // txt_NDREmin
+            // 
+            this.txt_NDREmin.Location = new System.Drawing.Point(288, 33);
+            this.txt_NDREmin.Name = "txt_NDREmin";
+            this.txt_NDREmin.Size = new System.Drawing.Size(100, 20);
+            this.txt_NDREmin.TabIndex = 40;
+            this.txt_NDREmin.Text = "-1";
+            // 
+            // PostProcessing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(617, 417);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.label18);
-            this.Controls.Add(this.label17);
-            this.Controls.Add(this.txt_NDVIHealthyMax);
-            this.Controls.Add(this.txt_NDVIStressedMax);
-            this.Controls.Add(this.txt_NDVIDeadMax);
-            this.Controls.Add(this.label16);
-            this.Controls.Add(this.label15);
-            this.Controls.Add(this.label14);
+            this.Controls.Add(this.txt_NDREMax);
+            this.Controls.Add(this.txt_NDREmin);
             this.Controls.Add(this.label13);
+            this.Controls.Add(this.txt_ndviMax);
+            this.Controls.Add(this.txt_ndviMin);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btn_DataDirectory);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.txt_DataDirectory);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
@@ -315,7 +330,7 @@
             this.Controls.Add(this.txt_H3Max);
             this.Controls.Add(this.txt_H2Max);
             this.Controls.Add(this.txt_H1Max);
-            this.Name = "Form1";
+            this.Name = "PostProcessing";
             this.Text = "Post Processing";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
@@ -341,16 +356,18 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.TextBox txt_NDVIDeadMax;
-        private System.Windows.Forms.TextBox txt_NDVIStressedMax;
-        private System.Windows.Forms.TextBox txt_NDVIHealthyMax;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txt_DataDirectory;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Button btn_DataDirectory;
+        private System.Windows.Forms.Button button2;
+        private System.ComponentModel.BackgroundWorker RunReportWorker;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.TextBox txt_ndviMin;
+        private System.Windows.Forms.TextBox txt_ndviMax;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox txt_NDREMax;
+        private System.Windows.Forms.TextBox txt_NDREmin;
     }
 }
 

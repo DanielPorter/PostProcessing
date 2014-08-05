@@ -166,7 +166,6 @@ namespace ReadShapefiles
                     worksheet.Cells[j, 13].Value = summary.H1Treecount;
                     worksheet.Cells[j, 14].Value = summary.ProductiveAcres;
                     worksheet.Cells[j, 15].Value = summary.OpenArea;
-                    worksheet.Cells[j, 16].Value = summary.ExpansionSpace;
                 }
 
                 package.Save();

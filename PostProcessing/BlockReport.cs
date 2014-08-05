@@ -66,8 +66,8 @@ namespace PostProcessing
             worksheet.Cells[currentRow, 25].Value = summary.H2Treecount;
             worksheet.Cells[currentRow, 26].Value = summary.H1Treecount;
             worksheet.Cells[currentRow, 27].Value = summary.ProductiveAcres;
-            worksheet.Cells[currentRow, 28].Value = summary.ExpansionSpace;
-            worksheet.Cells[currentRow, 29].Value = summary.OpenArea;
+            worksheet.Cells[currentRow, 28].Value = summary.OpenArea;
+            worksheet.Cells[currentRow, 29].Value = summary.SkipsLinearFeet;
             worksheet.Cells[currentRow, 30].Value = summary.NDREDeadwood;
             worksheet.Cells[currentRow, 31].Value = summary.NDREStressed;
             worksheet.Cells[currentRow, 32].Value = summary.NDREHealthy;
