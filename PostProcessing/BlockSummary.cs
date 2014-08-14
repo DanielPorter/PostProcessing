@@ -140,6 +140,8 @@ namespace PostProcessing
         public BlockSummary(System.Data.DataTable pointsDataTable, 
             double acres, double rowspacing, double treeSpacing, double adjustedTreeSpacing, string id, double treeDensity)
         {
+            TotalPointCount = pointsDataTable.Rows.Count;
+
             // TODO: Complete member initialization
             this.pointsDataTable = pointsDataTable;
 
@@ -158,7 +160,6 @@ namespace PostProcessing
 
             CalculateExpansionSpace3(pointsDataTable);
 
-            TotalPointCount = pointsDataTable.Rows.Count;
             
             H1PointPercentage = (groups[1].Count() - 1 + ExpansionClasses[1]) / TotalPointCount;
             H2PointPercentage = (groups[2].Count() - 1 + ExpansionClasses[2]) / TotalPointCount;
@@ -192,7 +193,7 @@ namespace PostProcessing
             NDVIClassification(pointsDataTable);
             this.name = name;
             this.MeanTreeDensity = MeanTreeDensity;
-            double H0PointPercentage = (groups[1].Count() - 1 + ExpansionClasses[1]) / TotalPointCount;
+            double H0PointPercentage = (groups[0].Count() - 1 + ExpansionClasses[0]) / TotalPointCount;
             OpenArea = H0PointPercentage * acres;
 
             bool distancePresent = false;

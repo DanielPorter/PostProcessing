@@ -13,7 +13,8 @@ using System.IO.Compression;
 using System.Diagnostics;
 using Npgsql;
 using System.Data.Odbc;
-using SocialExplorer.IO.FastDBF;
+using System.Data.OleDb;
+
 namespace PostProcessing
 {
 
@@ -26,16 +27,21 @@ namespace PostProcessing
         string[] FolderNames;
         public PostProcessing()
         {
-            FolderNames = System.IO.File.ReadAllLines(@"C:\Users\Public\documents\blockids.txt");
-            if (!Directory.Exists(dataDir))
+            dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\PostProcessing\\";
+            PolygonShapefile = dataDir + @"\SOURCEPOLYGON.shp";
+            try
             {
-                dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\PostProcessing\\";
+                polygons = FeatureSet.Open(PolygonShapefile);
+                FolderNames = polygons.Features.AsEnumerable().Select(x => (string)x.DataRow["harblkid"]).ToArray();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message + "\n" + err.StackTrace);
             }
             if (!Directory.Exists(dataDir))
             {
                 Directory.CreateDirectory(dataDir);
             }
-            PolygonShapefile = @"SOURCEPOLYGON.shp";
             reportPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + @"BlockReport.xlsx";
             InitializeComponent();
             txt_DataDirectory.Text = dataDir;
@@ -46,55 +52,8 @@ namespace PostProcessing
 
 
 
-        System.Data.DataTable ConvertFolderToDataTable(string folderPath)
-        {
-            List<string> shapefiles = Directory.EnumerateFiles(folderPath).Where(x => x.Contains(".shp") & !x.Contains(".lock")).ToList();
-            if (shapefiles.Count == 0)
-                return null;
-
-            DataTable dt = new DataTable();
-            DbfFile dbf = new DbfFile();
-            dbf.Open(shapefiles[0], FileMode.Open);
-            Type t = typeof(string);
-            for (int i = 0; i < dbf.Header.ColumnCount; i++)
-            {
-                t = GetType(dbf.Header[i].ColumnTypeChar);
-                dt.Columns.Add(dbf.Header[i].Name);
-            }
-
-            for (int i = 0; i < shapefiles.Count; i++)
-            {
-                dbf.Open(shapefiles[i], FileMode.Open);
-                DbfRecord orec = new DbfRecord(dbf.Header);
-                while (dbf.ReadNext(orec))
-                {
-                    dt.Rows.Add(orec);
-                }
-            }
-            return dt;
-        }
-
-        private Type GetType(char p)
-        {
-            if (p == 'D')
-                return typeof(DateTime);
-            if (p == 'C')
-                return typeof(string);
-            if (p == 'N')
-                return typeof(double);
-            if (p == 'I')
-            {
-                return typeof(int);
-            }
-            else
-                return typeof(bool);
-        }
         private void CreateFolders()
         {
-            if (!File.Exists(PolygonShapefile))
-                return;
-            MessageBox.Show("found the polygon shapefile.");
-            polygons = FeatureSet.Open(PolygonShapefile);
             polygons.FillAttributes();
             DataTable dt = polygons.DataTable;
 
@@ -189,6 +148,7 @@ namespace PostProcessing
                 MessageBox.Show(String.Format("Active row: {0}, name: {1}, meantreedensity: {2}, rowspacing {3}", 
                     activeRow, name, MeanTreeDensity,
                     Convert.ToDouble(dt.Rows[activeRow]["Row_Spacin"])
+                    
                     ));
                 report.WriteRow(new BlockSummary(pointsDataTable,
                     polygons.Features[activeRow].Area() / 4046.86, // acres conversion factor
@@ -215,6 +175,7 @@ namespace PostProcessing
                     FoldersWithShapefiles.Add(name);
                 }
             }
+            //string insertshapefile = "\"C:\\program files (x86)\\postgresql\\9.2\\bin\\shp2pgsql\" -d  SOURCEPOLYGON.shp ;
             MessageBox.Show(String.Format("{0} folders with shapefiles.", FoldersWithShapefiles.Count));
             foreach (string name in FoldersWithShapefiles)
             {
@@ -231,6 +192,7 @@ namespace PostProcessing
                         activeRow = i;
                     }
                 }
+                
                 IFeatureList allPoints = null;
                 List<string> batchcommands = new List<string>();
                 foreach (string file in Directory.EnumerateFiles(dataDir + name))

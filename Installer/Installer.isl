@@ -341,6 +341,10 @@
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td>{66D12545-6369-4EFB-A1C9-72E5E347EBEE}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{8D3F118E-FE62-4996-8084-E6CED2E806E6}</td><td>CommonFilesFolder</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT2</td><td>{57992D35-3E80-4896-B342-6649127793D1}</td><td>POSTPROCESSING1</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT3</td><td>{7133987E-B9CB-43BA-9B69-B9A0F2312E08}</td><td>ALLUSERSPROFILE</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT4</td><td>{4D462122-2968-4571-8796-6FC14B2683E7}</td><td>DOCUMENTS</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>PostProcessing.Primary_output</td><td>{76F3D94E-989C-4AA8-B345-312EF05141E5}</td><td>INSTALLDIR</td><td>2</td><td/><td>postprocessing.primary_outpu</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
@@ -1050,6 +1054,9 @@
 	<table name="CreateFolder">
 		<col key="yes" def="s72">Directory_</col>
 		<col key="yes" def="s72">Component_</col>
+		<row><td>ALLUSERSPROFILE</td><td>ISX_DEFAULTCOMPONENT3</td></row>
+		<row><td>CommonFilesFolder</td><td>ISX_DEFAULTCOMPONENT1</td></row>
+		<row><td>DOCUMENTS</td><td>ISX_DEFAULTCOMPONENT4</td></row>
 	</table>
 
 	<table name="CustomAction">
@@ -1137,6 +1144,7 @@
 		<row><td>CommonFilesFolder</td><td>TARGETDIR</td><td>.:Common</td><td/><td>0</td><td/></row>
 		<row><td>DANIEL_PORTER</td><td>ProgramFilesFolder</td><td>DANIEL~1|Daniel Porter</td><td/><td>0</td><td/></row>
 		<row><td>DATABASEDIR</td><td>ISYourDataBaseDir</td><td>.</td><td/><td>0</td><td/></row>
+		<row><td>DOCUMENTS</td><td>ALLUSERSPROFILE</td><td>DOCUME~1|Documents</td><td/><td>0</td><td/></row>
 		<row><td>DesktopFolder</td><td>TARGETDIR</td><td>.:Desktop</td><td/><td>3</td><td/></row>
 		<row><td>FavoritesFolder</td><td>TARGETDIR</td><td>.:FAVORI~1|Favorites</td><td/><td>0</td><td/></row>
 		<row><td>FontsFolder</td><td>TARGETDIR</td><td>.:Fonts</td><td/><td>0</td><td/></row>
@@ -1151,6 +1159,7 @@
 		<row><td>MyPicturesFolder</td><td>TARGETDIR</td><td>.:MyPict~1|MyPictures</td><td/><td>0</td><td/></row>
 		<row><td>NetHoodFolder</td><td>TARGETDIR</td><td>.:NetHood</td><td/><td>0</td><td/></row>
 		<row><td>POSTPROCESSING</td><td>ProgramFilesFolder</td><td>POSTPR~1|PostProcessing</td><td/><td>0</td><td/></row>
+		<row><td>POSTPROCESSING1</td><td>DOCUMENTS</td><td>POSTPR~1|PostProcessing</td><td/><td>0</td><td/></row>
 		<row><td>PersonalFolder</td><td>TARGETDIR</td><td>.:Personal</td><td/><td>0</td><td/></row>
 		<row><td>PrimaryVolumePath</td><td>TARGETDIR</td><td>.:Primar~1|PrimaryVolumePath</td><td/><td>0</td><td/></row>
 		<row><td>PrintHoodFolder</td><td>TARGETDIR</td><td>.:PRINTH~1|PrintHood</td><td/><td>0</td><td/></row>
@@ -1864,6 +1873,10 @@
 		<col key="yes" def="s38">Feature_</col>
 		<col key="yes" def="s72">Component_</col>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT2</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT3</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT4</td></row>
 		<row><td>AlwaysInstall</td><td>PostProcessing.Primary_output</td></row>
 	</table>
 
@@ -1881,6 +1894,12 @@
 		<col def="S72">ISComponentSubFolder_</col>
 		<row><td>postprocessing.primary_outpu</td><td>PostProcessing.Primary_output</td><td>PostProcessing.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PostProcessing&gt;|Built</td><td>3</td><td/></row>
 		<row><td>report_format.xlsx</td><td>ISX_DEFAULTCOMPONENT</td><td>REPORT~1.XLS|REPORT_FORMAT.xlsx</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\daniel\Documents\GitHub\PostProcessing\PostProcessing\bin\Debug\REPORT_FORMAT.xlsx</td><td>1</td><td/></row>
+		<row><td>sourcepolygon.dbf1</td><td>ISX_DEFAULTCOMPONENT2</td><td>SOURCE~1.DBF|SOURCEPOLYGON.dbf</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\daniel\Documents\GitHub\PostProcessing\PostProcessing\bin\Debug\SOURCEPOLYGON.dbf</td><td>1</td><td/></row>
+		<row><td>sourcepolygon.prj1</td><td>ISX_DEFAULTCOMPONENT2</td><td>SOURCE~1.PRJ|SOURCEPOLYGON.prj</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\daniel\Documents\GitHub\PostProcessing\PostProcessing\bin\Debug\SOURCEPOLYGON.prj</td><td>1</td><td/></row>
+		<row><td>sourcepolygon.sbn1</td><td>ISX_DEFAULTCOMPONENT2</td><td>SOURCE~1.SBN|SOURCEPOLYGON.sbn</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\daniel\Documents\GitHub\PostProcessing\PostProcessing\bin\Debug\SOURCEPOLYGON.sbn</td><td>1</td><td/></row>
+		<row><td>sourcepolygon.sbx1</td><td>ISX_DEFAULTCOMPONENT2</td><td>SOURCE~1.SBX|SOURCEPOLYGON.sbx</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\daniel\Documents\GitHub\PostProcessing\PostProcessing\bin\Debug\SOURCEPOLYGON.sbx</td><td>1</td><td/></row>
+		<row><td>sourcepolygon.shp1</td><td>ISX_DEFAULTCOMPONENT2</td><td>SOURCE~1.SHP|SOURCEPOLYGON.shp</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\daniel\Documents\GitHub\PostProcessing\PostProcessing\bin\Debug\SOURCEPOLYGON.shp</td><td>1</td><td/></row>
+		<row><td>sourcepolygon.shx1</td><td>ISX_DEFAULTCOMPONENT2</td><td>SOURCE~1.SHX|SOURCEPOLYGON.shx</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\daniel\Documents\GitHub\PostProcessing\PostProcessing\bin\Debug\SOURCEPOLYGON.shx</td><td>1</td><td/></row>
 	</table>
 
 	<table name="FileSFPCatalog">
@@ -2025,6 +2044,10 @@
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td/><td/><td>_F0743DBC_B736_4258_A280_94DF8E02E668_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_F53BCA08_986C_4B36_91D7_D9B2498E840E_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT2</td><td/><td/><td>_3BE8FB44_C159_4835_8DE9_9AB878B4B94C_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT3</td><td/><td/><td>_98BC86F5_17B1_4001_9F5E_491FCAAE3513_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT4</td><td/><td/><td>_DC81445D_8EE5_4665_A957_8DACB14D1351_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>PostProcessing.Primary_output</td><td/><td/><td>_1E6E0E0F_47E2_4DD8_82A4_8ED302BEE2B7_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
@@ -4366,7 +4389,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>PROGMSG_IIS_ROLLBACKAPPPOOLS</td><td>##IDS_PROGMSG_IIS_ROLLBACKAPPPOOLS##</td><td/></row>
 		<row><td>PROGMSG_IIS_ROLLBACKVROOTS</td><td>##IDS_PROGMSG_IIS_ROLLBACKVROOTS##</td><td/></row>
 		<row><td>PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS</td><td>##IDS_PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS##</td><td/></row>
-		<row><td>ProductCode</td><td>{D053D5AF-57A3-4E2B-AD0D-0828F94C4FC6}</td><td/></row>
+		<row><td>ProductCode</td><td>{06B8A239-29BE-4537-98B5-DF6DED43D9A4}</td><td/></row>
 		<row><td>ProductName</td><td>PostProcessing</td><td/></row>
 		<row><td>ProductVersion</td><td>1.00.0000</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
