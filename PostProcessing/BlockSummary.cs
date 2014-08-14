@@ -506,7 +506,7 @@ namespace PostProcessing
             }
             heights.Add(0);
             heights.Add(heightClasses.Last() + 1);
-            return heights.GroupBy(x => AssignHeightClass(x));
+            return heights.GroupBy(x => AssignHeightClass(x)).OrderBy(x => x.Key);
         }
         private static int AssignHeightClass(double height)
         {

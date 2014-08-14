@@ -25,10 +25,12 @@ namespace PostProcessing
         IFeatureSet polygons;
         string reportPath = @"C:\users\public\documents\postprocessing\BlockReport.xlsx";
         string[] FolderNames;
+        string PsqlDir;
         public PostProcessing()
         {
             dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\PostProcessing\\";
             PolygonShapefile = dataDir + @"\SOURCEPOLYGON.shp";
+            FindPsqlDir();
             try
             {
                 polygons = FeatureSet.Open(PolygonShapefile);
@@ -48,6 +50,20 @@ namespace PostProcessing
             CreateFolders();
 
 
+        }
+
+        private void FindPsqlDir()
+        {
+            if (File.Exists(@"c:\program files (x86)\postgresql\9.2\bin\psql.exe"))
+            {
+                PsqlDir = @"c:\program files (x86)\postgresql\9.2\bin\psql.exe";
+            }
+            else if (File.Exists(@"c:\program files\postgresql\9.2\bin\psql.exe"))
+            {
+                PsqlDir = @"c:\program files\postgresql\9.2\bin\psql.exe";
+            }
+            else
+                MessageBox.Show("Unable to locate psql, which is required for interfacing with PostgreSQL. Program can't run.");
         }
 
 
@@ -175,8 +191,19 @@ namespace PostProcessing
                     FoldersWithShapefiles.Add(name);
                 }
             }
-            //string insertshapefile = "\"C:\\program files (x86)\\postgresql\\9.2\\bin\\shp2pgsql\" -d  SOURCEPOLYGON.shp ;
+
+            string CreatePolygonSql = "\"C:\\program files\\postgresql\\9.2\\bin\\shp2pgsql\" -d  {0} > polygons.sql\r\n";
+            CreatePolygonSql = string.Format(CreatePolygonSql, PolygonShapefile);
+            string LoadPolygon = "{0}\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f polygons.sql";
+            LoadPolygon = string.Format(LoadPolygon, PsqlDir);
             MessageBox.Show(String.Format("{0} folders with shapefiles.", FoldersWithShapefiles.Count));
+            
+            File.WriteAllText("batch.bat", CreatePolygonSql + LoadPolygon);
+            Process pr = new Process();
+            pr.StartInfo.UseShellExecute = false;
+            pr.StartInfo.FileName = "batch.bat";
+            pr.Start();
+            pr.WaitForExit();
             foreach (string name in FoldersWithShapefiles)
             {
                 Process p = new Process();
