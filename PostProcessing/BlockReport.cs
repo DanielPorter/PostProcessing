@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OfficeOpenXml;
 using System.IO;
+using System.Reflection;
 namespace PostProcessing
 {
     class BlockReport
@@ -11,9 +12,21 @@ namespace PostProcessing
         ExcelPackage package;
         ExcelWorksheet worksheet;
         int currentRow = 10;
+        static public string AssemblyDirectory
+        {
+            get
+            {
+                
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
         public BlockReport(string path)
         {
-            File.Copy("REPORT_FORMAT.xlsx", @"C:\Users\public\documents\REPORT.xlsx", true);
+
+            File.Copy(AssemblyDirectory + @"\REPORT_FORMAT.xlsx", @"C:\Users\public\documents\REPORT.xlsx", true);
             FileInfo newFile = new FileInfo(@"C:\users\public\documents\REPORT.xlsx");
 
             package = new ExcelPackage(newFile);

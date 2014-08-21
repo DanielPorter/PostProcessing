@@ -166,7 +166,11 @@ namespace PostProcessing
             H3PointPercentage = (groups[3].Count() - 1 + ExpansionClasses[3]) / TotalPointCount;
             H4PointPercentage = (groups[4].Count() - 1 + ExpansionClasses[4]) / TotalPointCount;
             H5PointPercentage = (groups[5].Count() - 1 + ExpansionClasses[5]) / TotalPointCount;
-
+            double skipspct = SkipsLinearFeet / TotalLinearFeet;
+            double productivepct = H1PointPercentage + H2PointPercentage + H3PointPercentage + H4PointPercentage + H5PointPercentage;
+            double totalpct = productivepct + skipspct;
+            double productpctwithoutexpansion = (groups[1].Count() + groups[2].Count() + groups[3].Count() + groups[4].Count() + groups[5].Count()) / TotalPointCount;
+            double opnepct = groups[0].Count() / TotalPointCount;
             H1Acres = this.Acres * H1PointPercentage;
             H2Acres = this.Acres * H2PointPercentage;
             H3Acres = this.Acres * H3PointPercentage;
@@ -363,11 +367,11 @@ namespace PostProcessing
             int? beginning = null;
             for (int i = 0; i < pointsClassifiedByHeight.Count; i++)
             {
-                if (pointsClassifiedByHeight[i] == 0)
+                if (pointsClassifiedByHeight[i] != 0)
                 {
                     if (beginning != null)
                     {
-                        group_locations.Add(new Tuple<int, int>(beginning.Value, i - 1));
+                        group_locations.Add(new Tuple<int, int>( beginning.Value, i - 1));
                         beginning = null;
                     }
                 }
@@ -377,39 +381,77 @@ namespace PostProcessing
                     {
                         beginning = i;
                     }
-                    else
-                    {
-                        // Assume point is part of the group, ignore it.
-                    }
                 }
             }
+            //for (int i = 0; i < pointsClassifiedByHeight.Count; i++)
+            //{
+            //    if (pointsClassifiedByHeight[i] == 0)
+            //    {
+            //        if (beginning != null)
+            //        {
+            //            group_locations.Add(new Tuple<int, int>(beginning.Value, i - 1));
+            //            beginning = null;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (beginning == null)
+            //        {
+            //            beginning = i;
+            //        }
+            //        else
+            //        {
+            //            // Assume point is part of the group, ignore it.
+            //        }
+            //    }
+            //}
 
             foreach (Tuple<int, int> group in group_locations)
             {
-                for (int i = group.Item1 - 1; i >= group.Item1 - 3 & i >= 0; i--)
+                int item1Length;
+                int item2Length;
+                int groupLength = group.Item2 - group.Item1 + 1;
+                if (groupLength >= 6)
+                {
+                    item1Length = 3;
+                    item2Length = 3;
+                }
+                else
+                {
+                    item1Length = groupLength % 2 == 0 ? (groupLength / 2) : (groupLength / 2) + 1;
+                    item2Length = groupLength / 2;
+                }
+                for (int i = group.Item1; i < group.Item1 + item1Length & i != 0; i++)
                 {
                     if (Convert.ToDouble(rows[i]["HEIGHT"]) == 0)
                     {
-                        classes[pointsClassifiedByHeight[group.Item1]]++;
-                        emptyPoints.Remove(rows[i]);
+                        classes[pointsClassifiedByHeight[group.Item1 - 1]]++;
+                        if (!emptyPoints.Remove(rows[i]))
+                        {
+
+                        }
                     }
                     else
                         break;
                 }
-                for (int i = group.Item2 + 1; i <= group.Item2 + 3 & i < rows.Count; i++)
+                for (int i = group.Item2; i > group.Item2 - item2Length & i != pointsClassifiedByHeight.Count - 1; i--)
                 {
                     if (Convert.ToDouble(rows[i]["HEIGHT"]) == 0)
                     {
-                        classes[pointsClassifiedByHeight[group.Item2]]++;
-                        emptyPoints.Remove(rows[i]);
+                        classes[pointsClassifiedByHeight[group.Item2 + 1]]++;
+                        if(!emptyPoints.Remove(rows[i]))
+                        {
+                            
+                        }
                     }
                     else break;
                 }
             }
 
             int classesSum = classes.Sum();
-            int zeropoints = pointsClassifiedByHeight.Where(x => x == 0).Count();
             
+            int zeropoints = pointsClassifiedByHeight.Where(x => x == 0).Count();
+            zeropoints = emptyPoints.Count;   
         }
 
         private void CalculateExpansionSpace3(System.Data.DataTable featureTable)

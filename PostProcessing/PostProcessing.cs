@@ -161,11 +161,10 @@ namespace PostProcessing
                 {
                     AdjustedTreeSpacing = 0;
                 }
-                MessageBox.Show(String.Format("Active row: {0}, name: {1}, meantreedensity: {2}, rowspacing {3}", 
-                    activeRow, name, MeanTreeDensity,
-                    Convert.ToDouble(dt.Rows[activeRow]["Row_Spacin"])
-                    
-                    ));
+                //MessageBox.Show(String.Format("Active row: {0}, name: {1}, meantreedensity: {2}, rowspacing {3}", 
+                //    activeRow, name, MeanTreeDensity,
+                //    Convert.ToDouble(dt.Rows[activeRow]["Row_Spacin"])
+                //    ));
                 report.WriteRow(new BlockSummary(pointsDataTable,
                     polygons.Features[activeRow].Area() / 4046.86, // acres conversion factor
                     Convert.ToDouble(dt.Rows[activeRow]["Row_Spacin"]),
@@ -192,9 +191,9 @@ namespace PostProcessing
                 }
             }
 
-            string CreatePolygonSql = "\"C:\\program files\\postgresql\\9.2\\bin\\shp2pgsql\" -d  {0} > polygons.sql\r\n";
+            string CreatePolygonSql = "\"C:\\program files (x86)\\postgresql\\9.2\\bin\\shp2pgsql\" -d  {0} > polygons.sql\r\n";
             CreatePolygonSql = string.Format(CreatePolygonSql, PolygonShapefile);
-            string LoadPolygon = "{0}\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f polygons.sql";
+            string LoadPolygon = "\"{0}\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f polygons.sql";
             LoadPolygon = string.Format(LoadPolygon, PsqlDir);
             MessageBox.Show(String.Format("{0} folders with shapefiles.", FoldersWithShapefiles.Count));
             
@@ -240,8 +239,8 @@ namespace PostProcessing
                     }
                 }
 
-                string cmd2 = "\"c:\\program files (x86)\\postgresql\\9.2\\bin\\psql\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f {0}.sql";
-                batchcommands.Add(string.Format(cmd2, name));
+                string cmd2 = "\"c:\\Program Files (x86)\\postgresql\\9.2\\bin\\psql\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f {0}.sql >> log";
+
                 string cmd3= @"DELETE 
                 FROM {0}
 	                USING (SELECT geom FROM polygons WHERE harblkid = '{0}') as a

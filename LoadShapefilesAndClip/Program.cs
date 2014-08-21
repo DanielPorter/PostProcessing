@@ -14,21 +14,41 @@ namespace LoadShapefilesAndClip
     {
         static void Main(string[] args)
         {
-            CreateShapefiles();
-                /*
-            string dir = @"E:\Volume.75ab3445.e8f6.11e3.a5c4.806e6f6e6963";
+            //CreateShapefiles();
+              
+            string dir = @"I:\LaserData";
             string tableName = "LaserPoints";
             var a = Directory.EnumerateDirectories(dir).Select(directory => Directory.EnumerateFiles(directory).Where(file => file.EndsWith(".shp"))).SelectMany(i => i).ToList();
 
-            ShapefileLoader sl = new ShapefileLoader(@"C:\Program Files\Postgresql\9.2\bin\shp2pgsql");
+            ShapefileLoader sl = new ShapefileLoader(@"C:\program files (x86)\Postgresql\9.2\bin\shp2pgsql");
             
             var cmds = a.Select(x => sl.AppendShapefile(tableName, x)).ToList();
-            //List<string> cmds = new List<string>();
-            ExecuteCommands(cmds,tableName);
+            string cmd2 = "\"c:\\program files (x86)\\postgresql\\9.2\\bin\\psql\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f {0}.sql >> log";
+            cmds.Insert(0, string.Format(cmd2, "createlasertable"));
+            Execute(cmds);
+            List<string> loadSql = Directory.EnumerateFiles(Directory.GetCurrentDirectory())
+                 .Where(x => x.Contains("LaserPointstable"))
+                 .Select(x => x.Substring(0, x.Length - 4))
+                 .Select(x => string.Format(cmd2, x)).ToList();
 
-                */
+            cmds.Clear();
+
+            cmds.AddRange(loadSql);
+            cmds.Add(string.Format(cmd2, "assignharblkid"));
+            Execute(cmds);
+            CreateShapefiles();
+
+            
         }
-
+        private static void Execute(List<string> cmds)
+        {
+            File.WriteAllLines(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\execute.bat", cmds);
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\execute.bat";
+            p.Start();
+            p.WaitForExit();
+        }
         private static void ExecuteCommands(List<string> cmds, string tableName)
         {
             Process p = new Process();
@@ -37,7 +57,7 @@ namespace LoadShapefilesAndClip
                 FROM {0}
 	                USING (SELECT geom FROM polygons WHERE harblkid = '{0}') as a
                 WHERE NOT st_contains(a.geom, {0}.geom)";
-            string cmd2 = "\"c:\\program files\\postgresql\\9.3\\bin\\psql\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f {0}.sql >> log";
+            string cmd2 = "\"c:\\program files (x86)\\postgresql\\9.2\\bin\\psql\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f {0}.sql >> log";
             cmds.Add(string.Format(cmd2, tableName));
             List<string> loadSql = Directory.EnumerateFiles(Directory.GetCurrentDirectory())
                  .Where(x => x.Contains("LaserPointstable"))
@@ -46,10 +66,11 @@ namespace LoadShapefilesAndClip
             
             cmds.Insert(0, string.Format(cmd2, "createlasertable"));
             cmds.AddRange(loadSql);
-            File.WriteAllLines(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + tableName + ".bat", cmds);
-            p.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + tableName + ".bat";
+            File.WriteAllLines(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\" + tableName + ".bat", cmds);
+            p.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\" + tableName + ".bat";
             p.Start();
             p.WaitForExit();
+            
         }
 
         private static void CreateShapefiles()
@@ -70,8 +91,8 @@ namespace LoadShapefilesAndClip
 
             System.Data.DataTable pointsDataTable = ds.Tables[0];
             conn.Close();
-
-            string cmd = "\"c:\\program files\\postgresql\\9.2\\bin\\pgsql2shp\" -f e:\\shapefiles\\{0} -h localhost -u postgres -P postgres -p 5434 postgis_21_sample \"SELECT * FROM laserpoints WHERE harblkid = '{1}'\"";
+            Directory.CreateDirectory("I:\\block_laser_shapefiles");
+            string cmd = "\"c:\\program files (x86)\\postgresql\\9.2\\bin\\pgsql2shp\" -f I:\\block_laser_shapefiles\\{0} -h localhost -u postgres -P postgres -p 5434 postgis_21_sample \"SELECT * FROM laserpoints WHERE harblkid = '{1}'\"";
             List<string> cmds = new List<string>();
             foreach (DataRow dr in pointsDataTable.Rows)
             {
@@ -91,7 +112,8 @@ namespace LoadShapefilesAndClip
 
             File.WriteAllLines(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "getshapefiles" + ".bat", cmds);
             p.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "getshapefiles" + ".bat";
-
+            p.Start();
+            p.WaitForExit();
         }
         
         
