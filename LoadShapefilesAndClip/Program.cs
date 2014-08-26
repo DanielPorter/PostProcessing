@@ -22,10 +22,10 @@ namespace LoadShapefilesAndClip
 
             ShapefileLoader sl = new ShapefileLoader(@"C:\program files (x86)\Postgresql\9.2\bin\shp2pgsql");
             
-            var cmds = a.Select(x => sl.AppendShapefile(tableName, x)).ToList();
+            var cmds = a.Select(x => sl.ConvertShapefileToSql(tableName, x)).ToList();
             string cmd2 = "\"c:\\program files (x86)\\postgresql\\9.2\\bin\\psql\" -h localhost -U postgres -p 5434 -d postgis_21_sample -f {0}.sql >> log";
             cmds.Insert(0, string.Format(cmd2, "createlasertable"));
-            Execute(cmds);
+            Execute(cmds, "CreateSQLFromShapefiles");
             List<string> loadSql = Directory.EnumerateFiles(Directory.GetCurrentDirectory())
                  .Where(x => x.Contains("LaserPointstable"))
                  .Select(x => x.Substring(0, x.Length - 4))
@@ -35,19 +35,19 @@ namespace LoadShapefilesAndClip
 
             cmds.AddRange(loadSql);
             cmds.Add(string.Format(cmd2, "assignharblkid"));
-            Execute(cmds);
+            Execute(cmds, "LoadSQL");
             CreateShapefiles();
 
             
         }
-        private static void Execute(List<string> cmds)
+        private static void Execute(List<string> cmds, string batchFileName)
         {
-            File.WriteAllLines(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\execute.bat", cmds);
+            File.WriteAllLines(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\" + batchFileName +  ".bat", cmds);
             Process p = new Process();
             p.StartInfo.UseShellExecute = false;
-            p.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\execute.bat";
-            p.Start();
-            p.WaitForExit();
+            p.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\" + batchFileName +  ".bat";
+            //p.Start();
+            //p.WaitForExit();
         }
         private static void ExecuteCommands(List<string> cmds, string tableName)
         {
@@ -82,7 +82,7 @@ namespace LoadShapefilesAndClip
             NpgsqlConnection conn = new NpgsqlConnection(connstring);
             conn.Open();
 
-            string query = "select distinct harblkid from laserpoints;";
+            string query = "select distinct harblkid from sourcepolygon;";
             
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, conn);
             System.Data.DataSet ds = new System.Data.DataSet();
@@ -112,8 +112,8 @@ namespace LoadShapefilesAndClip
 
             File.WriteAllLines(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "getshapefiles" + ".bat", cmds);
             p.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "getshapefiles" + ".bat";
-            p.Start();
-            p.WaitForExit();
+            //p.Start();
+            //p.WaitForExit();
         }
         
         

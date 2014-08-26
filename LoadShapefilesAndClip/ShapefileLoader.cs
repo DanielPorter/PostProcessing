@@ -8,17 +8,17 @@ namespace LoadShapefilesAndClip
 {
     class ShapefileLoader
     {
-        string PSQLDir;
+        string shp2pgsqlDir;
         int filenumber = 0;
-        public ShapefileLoader(string PSQLDir)
+        public ShapefileLoader(string shp2pgsqlDir)
         {
-            this.PSQLDir = PSQLDir;
+            this.shp2pgsqlDir = shp2pgsqlDir;
         }
 
-        public string AppendShapefile(string table, string path)
+        public string ConvertShapefileToSql(string table, string path)
         {
             filenumber++;
-            return String.Format("\"{0}\" -a \"{1}\" {2} > {2}table{3}.sql", PSQLDir, path, table, filenumber);
+            return String.Format("\"{0}\" -a \"{1}\" {2} > {2}table{3}.sql", shp2pgsqlDir, path, table, filenumber);
         }
     }
 }
