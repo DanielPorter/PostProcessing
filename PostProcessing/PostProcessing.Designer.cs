@@ -44,11 +44,11 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.txt_DataDirectory = new System.Windows.Forms.TextBox();
+            this.btn_Process = new System.Windows.Forms.Button();
+            this.txt_DataSource = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.btn_DataDirectory = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btn_LoadShapefiles = new System.Windows.Forms.Button();
             this.RunReportWorker = new System.ComponentModel.BackgroundWorker();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.txt_ndviMin = new System.Windows.Forms.TextBox();
@@ -56,6 +56,10 @@
             this.label13 = new System.Windows.Forms.Label();
             this.txt_NDREMax = new System.Windows.Forms.TextBox();
             this.txt_NDREmin = new System.Windows.Forms.TextBox();
+            this.lbl_Progress = new System.Windows.Forms.Label();
+            this.data_destination = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.txt_DataDestination = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txt_H1Max
@@ -198,35 +202,35 @@
             this.label12.TabIndex = 21;
             this.label12.Text = "NDRE Ranges";
             // 
-            // button1
+            // btn_Process
             // 
-            this.button1.Location = new System.Drawing.Point(288, 132);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(239, 110);
-            this.button1.TabIndex = 31;
-            this.button1.Text = "Run Calculations";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btn_Process.Location = new System.Drawing.Point(288, 132);
+            this.btn_Process.Name = "btn_Process";
+            this.btn_Process.Size = new System.Drawing.Size(239, 110);
+            this.btn_Process.TabIndex = 31;
+            this.btn_Process.Text = "Run Calculations";
+            this.btn_Process.UseVisualStyleBackColor = true;
+            this.btn_Process.Click += new System.EventHandler(this.createReport_click);
             // 
-            // txt_DataDirectory
+            // txt_DataSource
             // 
-            this.txt_DataDirectory.Location = new System.Drawing.Point(70, 277);
-            this.txt_DataDirectory.Name = "txt_DataDirectory";
-            this.txt_DataDirectory.Size = new System.Drawing.Size(252, 20);
-            this.txt_DataDirectory.TabIndex = 32;
+            this.txt_DataSource.Location = new System.Drawing.Point(95, 320);
+            this.txt_DataSource.Name = "txt_DataSource";
+            this.txt_DataSource.Size = new System.Drawing.Size(252, 20);
+            this.txt_DataSource.TabIndex = 32;
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(23, 280);
+            this.label19.Location = new System.Drawing.Point(22, 323);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(43, 13);
+            this.label19.Size = new System.Drawing.Size(67, 13);
             this.label19.TabIndex = 33;
-            this.label19.Text = "DataDir";
+            this.label19.Text = "Data Source";
             // 
             // btn_DataDirectory
             // 
-            this.btn_DataDirectory.Location = new System.Drawing.Point(332, 273);
+            this.btn_DataDirectory.Location = new System.Drawing.Point(353, 317);
             this.btn_DataDirectory.Name = "btn_DataDirectory";
             this.btn_DataDirectory.Size = new System.Drawing.Size(143, 23);
             this.btn_DataDirectory.TabIndex = 34;
@@ -234,27 +238,28 @@
             this.btn_DataDirectory.UseVisualStyleBackColor = true;
             this.btn_DataDirectory.Click += new System.EventHandler(this.btn_DataDirectory_Click);
             // 
-            // button2
+            // btn_LoadShapefiles
             // 
-            this.button2.Location = new System.Drawing.Point(79, 314);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(396, 23);
-            this.button2.TabIndex = 35;
-            this.button2.Text = "Load Shapefiles (takes a long time)";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btn_LoadShapefiles.Location = new System.Drawing.Point(71, 385);
+            this.btn_LoadShapefiles.Name = "btn_LoadShapefiles";
+            this.btn_LoadShapefiles.Size = new System.Drawing.Size(416, 43);
+            this.btn_LoadShapefiles.TabIndex = 35;
+            this.btn_LoadShapefiles.Text = "Load Shapefiles (takes a long time)";
+            this.btn_LoadShapefiles.UseVisualStyleBackColor = true;
+            this.btn_LoadShapefiles.Click += new System.EventHandler(this.loadShapefiles_Click);
             // 
             // RunReportWorker
             // 
             this.RunReportWorker.WorkerReportsProgress = true;
             this.RunReportWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.RunReportWorker_DoWork);
             this.RunReportWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.RunReportWorker_ProgressChanged);
+            this.RunReportWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.RunReportWorker_RunWorkerCompleted);
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(79, 343);
+            this.progressBar1.Location = new System.Drawing.Point(16, 248);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(396, 23);
+            this.progressBar1.Size = new System.Drawing.Size(511, 23);
             this.progressBar1.TabIndex = 36;
             // 
             // txt_ndviMin
@@ -298,22 +303,62 @@
             this.txt_NDREmin.TabIndex = 40;
             this.txt_NDREmin.Text = "-1";
             // 
+            // lbl_Progress
+            // 
+            this.lbl_Progress.AutoSize = true;
+            this.lbl_Progress.Location = new System.Drawing.Point(279, 278);
+            this.lbl_Progress.Name = "lbl_Progress";
+            this.lbl_Progress.Size = new System.Drawing.Size(48, 13);
+            this.lbl_Progress.TabIndex = 42;
+            this.lbl_Progress.Text = "Progress";
+            // 
+            // data_destination
+            // 
+            this.data_destination.Location = new System.Drawing.Point(353, 347);
+            this.data_destination.Name = "data_destination";
+            this.data_destination.Size = new System.Drawing.Size(143, 23);
+            this.data_destination.TabIndex = 43;
+            this.data_destination.Text = "Select Data Destination";
+            this.data_destination.UseVisualStyleBackColor = true;
+            this.data_destination.Click += new System.EventHandler(this.data_destination_Click);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(6, 347);
+            this.label14.Name = "label14";
+            this.label14.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label14.Size = new System.Drawing.Size(86, 13);
+            this.label14.TabIndex = 44;
+            this.label14.Text = "Data Destination";
+            // 
+            // txt_DataDestination
+            // 
+            this.txt_DataDestination.Location = new System.Drawing.Point(95, 347);
+            this.txt_DataDestination.Name = "txt_DataDestination";
+            this.txt_DataDestination.Size = new System.Drawing.Size(252, 20);
+            this.txt_DataDestination.TabIndex = 45;
+            // 
             // PostProcessing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(617, 417);
+            this.ClientSize = new System.Drawing.Size(617, 453);
+            this.Controls.Add(this.txt_DataDestination);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.data_destination);
+            this.Controls.Add(this.lbl_Progress);
             this.Controls.Add(this.txt_NDREMax);
             this.Controls.Add(this.txt_NDREmin);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.txt_ndviMax);
             this.Controls.Add(this.txt_ndviMin);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btn_LoadShapefiles);
             this.Controls.Add(this.btn_DataDirectory);
             this.Controls.Add(this.label19);
-            this.Controls.Add(this.txt_DataDirectory);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.txt_DataSource);
+            this.Controls.Add(this.btn_Process);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
@@ -332,7 +377,6 @@
             this.Controls.Add(this.txt_H1Max);
             this.Name = "PostProcessing";
             this.Text = "Post Processing";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -356,11 +400,11 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox txt_DataDirectory;
+        private System.Windows.Forms.Button btn_Process;
+        private System.Windows.Forms.TextBox txt_DataSource;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Button btn_DataDirectory;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btn_LoadShapefiles;
         private System.ComponentModel.BackgroundWorker RunReportWorker;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.TextBox txt_ndviMin;
@@ -368,6 +412,10 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox txt_NDREMax;
         private System.Windows.Forms.TextBox txt_NDREmin;
+        private System.Windows.Forms.Label lbl_Progress;
+        private System.Windows.Forms.Button data_destination;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox txt_DataDestination;
     }
 }
 

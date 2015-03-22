@@ -8,11 +8,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PostProcessing
 {
+    [Serializable]
     class PostProcessingSettings
     {
-        public List<double> HeightCats;
-        public List<double> DensityCats;
-        public List<double> IRCats;
+        public List<double> HeightCats = new List<double>();
+        public List<double> DensityCats = new List<double>();
+        public List<double> IRCats = new List<double>();
+
+        public string SourceDataDir;
+        public string DestinationDataDir;
 
         public void SaveSettings()
         {
@@ -33,6 +37,9 @@ namespace PostProcessing
                 HeightCats = tempSettings.HeightCats;
                 DensityCats = tempSettings.DensityCats;
                 IRCats = tempSettings.IRCats;
+
+                SourceDataDir = tempSettings.SourceDataDir;
+                DestinationDataDir = tempSettings.DestinationDataDir;
             }
             catch
             {
@@ -62,6 +69,9 @@ namespace PostProcessing
             IRCats.Add(3);
             IRCats.Add(4);
             IRCats.Add(5);
+
+            DestinationDataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + "\\PostProcessing\\";
+            SourceDataDir = "";
         }
     }
 }
